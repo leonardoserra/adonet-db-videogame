@@ -46,19 +46,31 @@
                                     Console.WriteLine("Videogioco aggiunto al Torneo!");
                                 else
                                     Console.WriteLine("Problema con l'aggiunta del videgioco al torneo...");
+
                                 Console.WriteLine();
 
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine();
+                                Console.WriteLine(ex.Message);
                                 continue;
                             }
                         }
                         break;
                     case 2:
                         //Cerca per id
-
+                        try
+                        {
+                            Console.Write("Digita l'id del gioco che vuoi cercare: ");
+                            long id= long.Parse(Console.ReadLine());
+                            Console.WriteLine();
+                            Console.WriteLine(VideogameManager.SearchVideogameById(id));
+                          
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
                         break;
                     case 3:
                         //Cerca per nome (anche parziale)

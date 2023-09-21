@@ -39,6 +39,42 @@ namespace adonet_db_videogame
             }
             return videogames;
         }
+        public static Videogame SearchVideogameById(long idSearched)
+        {
+            
+            using (SqlConnection connection = new SqlConnection(databaseConnectionInfo))
+            {
+                try
+                {
+                    connection.Open();
+                    string query = "SELECT id, name, overview, release_date, software_house_id FROM videogames WHERE id=@Id";
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@Id", idSearched));
+                        SqlDataReader data = cmd.ExecuteReader();
+                        if (data.Read()==false)
+                            throw new NullReferenceException();
+
+                        long id = data.GetInt64(0);
+                        string nameFound = data.GetString(1);
+                        string overview = data.GetString(2);
+                        DateTime date = data.GetDateTime(3);
+                        long softwareHouseId = data.GetInt64(4);
+                        return new Videogame(id, nameFound, overview, date, softwareHouseId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+            throw new NullReferenceException();
+        }
+
 
         public static List<Videogame> SearchVideogameByName(string name)
         {
@@ -47,31 +83,31 @@ namespace adonet_db_videogame
             {
                 try
                 {
+                    string newName = $"'%{name}%'";
                     connection.Open();
-                    string query = "SELECT id, name, overview, release_date, software_house_id FROM videogames WHERE name='%@Name%'";
+                    string query = "SELECT id, name, overview, release_date, software_house_id FROM videogames WHERE name LIKE @Name";
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
-                        cmd.Parameters.Add(new SqlParameter("@Name", name));
-
-                        using (SqlDataReader data = cmd.ExecuteReader())
+                        cmd.Parameters.Add(new SqlParameter("@Name", newName));
+                        SqlDataReader data = cmd.ExecuteReader();
+                        while (data.Read())
                         {
+                            long id = data.GetInt64(0);
+                            string nameFound = data.GetString(1);
+                            string overview = data.GetString(2);
+                            DateTime date = data.GetDateTime(3);
+                            long softwareHouseId = data.GetInt64(4);
+                            videogames.Add(new Videogame(id, nameFound, overview, date, softwareHouseId));
 
-                            while (data.Read())
-                            {
-                                long id = data.GetInt64(0);
-                                string nameFound = data.GetString(1);
-                                string overview = data.GetString(2);
-                                DateTime date = data.GetDateTime(3);
-                                long softwareHouseId = data.GetInt64(4);
-                                videogames.Add(new Videogame(id, nameFound, overview, date, softwareHouseId));
-
-                            }
                         }
+                        
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                }finally {
+                    connection.Close();
                 }
             }
             return videogames;
@@ -90,9 +126,7 @@ namespace adonet_db_videogame
                     cmd.Parameters.Add(new SqlParameter("@Name", name));
                     cmd.Parameters.Add(new SqlParameter("@Overview", overview));
                     cmd.Parameters.Add(new SqlParameter("@ReleaseDate", releaseDate));
-                    //BUG DA FIXARE
                     cmd.Parameters.Add(new SqlParameter("@SoftwareHouseId", softwareHouseId));
-                    //BUG DA FIXARE
 
                     int rowsAffected = cmd.ExecuteNonQuery();
                     if (rowsAffected > 0)
@@ -131,12 +165,10 @@ namespace adonet_db_videogame
                     {
                         return true;
                     }
-
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-
                 }
                 finally
                 {
