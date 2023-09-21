@@ -40,34 +40,39 @@ namespace adonet_db_videogame
             return videogames;
         }
 
-/*        public static bool InsertVideogame(string name)
+        public static bool InsertVideogame(string name, string overview, DateTime releaseDate, long softwareHouseId)
         {
-            
             using (SqlConnection connection = new SqlConnection(databaseConnectionInfo))
             {
                 try
                 {
                     connection.Open();
-                    string query = "INSERT INTO videogames (name, overview)";
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
-                    using (SqlDataReader data = cmd.ExecuteReader())
+                    string query = "INSERT INTO videogames (name, overview, releaseDate, softwareHouseId) VALUES (@Name, @Overview, @ReleaseDate, @SoftwareHouseId)";
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    
+                    cmd.Parameters.Add(new SqlParameter("@Name", name));
+                    cmd.Parameters.Add(new SqlParameter("@Name", overview));
+                    cmd.Parameters.Add(new SqlParameter("@Name", releaseDate));
+                    cmd.Parameters.Add(new SqlParameter("@Name", softwareHouseId));
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
                     {
-                        while (data.Read())
-                        {
-                          
-
-                            
-
-                        }
+                        return true;
                     }
+
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
 
                 }
+                finally
+                {
+                    connection.Close();
+                }
             }
             return false;
         }
-*/    }
+   }
 }

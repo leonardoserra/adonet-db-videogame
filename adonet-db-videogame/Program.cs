@@ -22,9 +22,29 @@
                 switch (selectedOperation)
                 {
                     case 1:
-                        //Inserire un nuovo videogioco
+                        {
+                            //Inserire un nuovo videogioco
+                            Console.WriteLine("Inserisci i dati del videogioco");
 
+                            Console.Write("\tNome: ");
+                            string name = Console.ReadLine();
+                            Console.WriteLine();
+                            Console.Write("\tInfo: ");
+                            string overview = Console.ReadLine();
+                            Console.WriteLine();
+                            Console.Write("\tData rilascio: ");
+                            DateTime releaseDate = DateTime.Parse(Console.ReadLine());
+                            Console.WriteLine();
+                            Console.Write("\tid Software House: ");
+                            long softwareHouseId = long.Parse(Console.ReadLine());
+                            Console.WriteLine();
 
+                            bool success = VideogameManager.InsertVideogame(name, overview, releaseDate, softwareHouseId);
+                            if (success)
+                                Console.WriteLine("Videogioco aggiunto al Torneo!");
+                            else
+                                Console.WriteLine("Problema con l'aggiunta del videgioco al torneo...");
+                        }
                         break;
                     case 2:
                         //Cerca per id
