@@ -18,16 +18,17 @@ namespace adonet_db_videogame
             {
                 try { 
                     connection.Open();
-                    string query = "SELECT id, name, overview FROM videogames";
+                    string query = "SELECT id, name, overview, release_date, software_house_id FROM videogames";
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     using(SqlDataReader data = cmd.ExecuteReader()) {
                         while (data.Read())
                         {
-                            float id = data.GetInt64(0);
+                            long id = data.GetInt64(0);
                             string name = data.GetString(1);
                             string overview = data.GetString(2);
-
-                            videogames.Add(new Videogame(id, name, overview));
+                            DateTime date = data.GetDateTime(3);
+                            long softwareHouseId = data.GetInt64(4);
+                            videogames.Add(new Videogame(id, name, overview, date, softwareHouseId));
 
                         }
                     }
@@ -37,6 +38,36 @@ namespace adonet_db_videogame
                 }
             }
             return videogames;
-        } 
-    }
+        }
+
+/*        public static bool InsertVideogame(string name)
+        {
+            
+            using (SqlConnection connection = new SqlConnection(databaseConnectionInfo))
+            {
+                try
+                {
+                    connection.Open();
+                    string query = "INSERT INTO videogames (name, overview)";
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    using (SqlDataReader data = cmd.ExecuteReader())
+                    {
+                        while (data.Read())
+                        {
+                          
+
+                            
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+
+                }
+            }
+            return false;
+        }
+*/    }
 }
