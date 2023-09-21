@@ -83,7 +83,7 @@ namespace adonet_db_videogame
             {
                 try
                 {
-                    string newName = $"'%{name}%'";
+                    string newName = $"%{name}%";
                     connection.Open();
                     string query = "SELECT id, name, overview, release_date, software_house_id FROM videogames WHERE name LIKE @Name";
                     using (SqlCommand cmd = new SqlCommand(query, connection))
