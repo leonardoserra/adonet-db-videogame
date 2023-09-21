@@ -40,6 +40,43 @@ namespace adonet_db_videogame
             return videogames;
         }
 
+        public static List<Videogame> SearchVideogameByName(string name)
+        {
+            List<Videogame> videogames = new List<Videogame>();
+            using (SqlConnection connection = new SqlConnection(databaseConnectionInfo))
+            {
+                try
+                {
+                    connection.Open();
+                    string query = "SELECT id, name, overview, release_date, software_house_id FROM videogames WHERE name='%@Name%'";
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@Name", name));
+
+                        using (SqlDataReader data = cmd.ExecuteReader())
+                        {
+
+                            while (data.Read())
+                            {
+                                long id = data.GetInt64(0);
+                                string nameFound = data.GetString(1);
+                                string overview = data.GetString(2);
+                                DateTime date = data.GetDateTime(3);
+                                long softwareHouseId = data.GetInt64(4);
+                                videogames.Add(new Videogame(id, nameFound, overview, date, softwareHouseId));
+
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            return videogames;
+        }
+
         public static bool InsertVideogame(string name, string overview, DateTime releaseDate, long softwareHouseId)
         {
             using (SqlConnection connection = new SqlConnection(databaseConnectionInfo))
@@ -47,13 +84,15 @@ namespace adonet_db_videogame
                 try
                 {
                     connection.Open();
-                    string query = "INSERT INTO videogames (name, overview, releaseDate, softwareHouseId) VALUES (@Name, @Overview, @ReleaseDate, @SoftwareHouseId)";
+                    string query = "INSERT INTO videogames (name, overview, release_date, software_house_id) VALUES (@Name, @Overview, @ReleaseDate, @SoftwareHouseId)";
                     SqlCommand cmd = new SqlCommand(query, connection);
                     
                     cmd.Parameters.Add(new SqlParameter("@Name", name));
-                    cmd.Parameters.Add(new SqlParameter("@Name", overview));
-                    cmd.Parameters.Add(new SqlParameter("@Name", releaseDate));
-                    cmd.Parameters.Add(new SqlParameter("@Name", softwareHouseId));
+                    cmd.Parameters.Add(new SqlParameter("@Overview", overview));
+                    cmd.Parameters.Add(new SqlParameter("@ReleaseDate", releaseDate));
+                    //BUG DA FIXARE
+                    cmd.Parameters.Add(new SqlParameter("@SoftwareHouseId", softwareHouseId));
+                    //BUG DA FIXARE
 
                     int rowsAffected = cmd.ExecuteNonQuery();
                     if (rowsAffected > 0)
@@ -74,5 +113,38 @@ namespace adonet_db_videogame
             }
             return false;
         }
-   }
+
+        public static bool DeleteVideogame(long idToDelete)
+        {
+            using (SqlConnection connection = new SqlConnection(databaseConnectionInfo))
+            {
+                try
+                {
+                    connection.Open();
+                    string query = "DELETE FROM videogames WHERE id=@Id";
+                    SqlCommand cmd = new SqlCommand(query, connection);
+
+                    cmd.Parameters.Add(new SqlParameter("@Id", idToDelete));
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected == 1)
+                    {
+                        return true;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+            return false;
+        }
+
+    }
 }
