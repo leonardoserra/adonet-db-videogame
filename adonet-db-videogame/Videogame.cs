@@ -12,24 +12,17 @@ namespace adonet_db_videogame
         public float Id { get; private set; }
         public string Name { get; private set; }
         public string Overview { get; private set; }
-        public DateOnly ReleaseDate { get; private set; }
-        public float SoftwareHouseId { get; private set; }
         
-        public Videogame(float id, string name, string overview, DateOnly releaseDate, float softwareHouseId)
+        public Videogame(float id, string name, string overview)
         {
             this.Id = id;
             this.Name = name;
             this.Overview = overview;
-            this.ReleaseDate = releaseDate;
         }
 
         public override string ToString()
         {
-            return $@"ID: {Id}, {Name}
-
-                    {Overview} 
-
-                    {ReleaseDate}";
+            return $"ID: {Id},\r\nName: {Name}";
         }
     }
 }

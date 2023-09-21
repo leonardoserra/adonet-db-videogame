@@ -40,6 +40,14 @@
                         programExecuting = false;
                         ExitAnimation();
                         break;
+                    case 0555:
+                        //stampa debug lista
+                        List<Videogame> videogames = VideogameManager.GetVideogamesList();
+                        foreach (Videogame v in videogames)
+                        {
+                            Console.WriteLine(v);
+                        }
+                        break;
                     default:
                         Console.WriteLine("Comando non valido");
                         Console.WriteLine("Vuoi uscire? y/n");
